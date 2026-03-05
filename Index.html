@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Failed MRCS? Find Out Why | MRCS Oxford</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #F5F6F8;
+    --white:     #FFFFFF;
+    --dark:      #2E3A3F;
+    --dark2:     #3B4B52;
+    --orange:    #E8743A;
+    --orange-h:  #D4632A;
+    --orange-bg: #FEF3EC;
+    --border:    #DDE1E5;
+    --muted:     #7A8F96;
+    --text:      #2E3A3F;
+    --light-text:#5A6E75;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    width: 100%;
+    height: 3px;
+    background: var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 199;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--orange);
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* ── APP ── */
+  .app {
+    min-height: 100vh;
+    padding-top: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; width: 100%; }
+  .screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeUp 0.4s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── LANDING ── */
+  .landing {
+    max-width: 660px;
+    padding: 64px 24px 64px;
+    text-align: center;
+  }
+
+  .pill-tag {
+    display: inline-block;
+    background: var(--orange-bg);
+    border: 1px solid rgba(232,116,58,0.25);
+    color: var(--orange);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .landing h1 {
+    font-weight: 700;
+    font-size: clamp(2rem, 5.5vw, 3.4rem);
+    line-height: 1.1;
+    color: var(--dark);
+    margin-bottom: 16px;
+  }
+
+  .landing h1 em {
+    font-style: normal;
+    color: var(--orange);
+  }
+
+  .landing .sub {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--light-text);
+    line-height: 1.65;
+    max-width: 480px;
+    margin: 0 auto 40px;
+  }
+
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    max-width: 380px;
+    margin: 0 auto 44px;
+    background: var(--white);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+
+  .stat-item {
+    flex: 1;
+    padding: 20px 12px;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+  .stat-item:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.9rem;
+    color: var(--orange);
+    line-height: 1;
+    letter-spacing: 0.05em;
+    margin-bottom: 3px;
+  }
+
+  .stat-lbl {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    display: inline-block;
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    padding: 14px 40px;
+    border-radius: 100px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-primary:hover {
+    background: var(--orange-h);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,116,58,0.3);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-outline {
+    display: inline-block;
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+    padding: 12px 28px;
+    border-radius: 100px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--dark2); color: var(--dark); }
+
+  /* ── MODAL OVERLAY ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(46,58,63,0.5);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn 0.25s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 40px 36px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    animation: slideUp 0.3s ease;
+    text-align: center;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--orange-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.4rem;
+  }
+
+  .modal-input.error {
+    border-color: #E53935;
+    background: #FFF5F5;
+  }
+
+  .field-error {
+    font-size: 0.72rem;
+    color: #E53935;
+    margin-top: 5px;
+    display: none;
+    font-weight: 500;
+  }
+
+  .field-error.show { display: block; }
+
+  .modal-form { text-align: left; }
+
+  .modal-field { margin-bottom: 14px; }
+
+  .modal-field label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .modal-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 16px;
+    color: var(--dark);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .modal-input:focus { border-color: var(--orange); background: var(--white); }
+  .modal-input::placeholder { color: #B0BEC5; }
+
+  .modal-submit { width: 100%; margin-top: 6px; padding: 15px; font-size: 1.1rem; }
+
+  .modal-privacy {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  /* ── QUESTION SCREEN ── */
+  .question-wrap {
+    width: 100%;
+    max-width: 620px;
+    padding: 48px 24px 48px;
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .q-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--orange);
+    white-space: nowrap;
+  }
+
+  .q-line { flex: 1; height: 1px; background: var(--border); }
+
+  .q-text {
+    font-weight: 600;
+    font-size: clamp(1.2rem, 3vw, 1.65rem);
+    line-height: 1.3;
+    color: var(--dark);
+    margin-bottom: 32px;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 20px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    color: var(--light-text);
+    font-size: 0.93rem;
+    font-weight: 400;
+    text-align: left;
+    width: 100%;
+    font-family: 'Outfit', sans-serif;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .opt:hover {
+    border-color: var(--orange);
+    background: var(--orange-bg);
+    color: var(--dark);
+    transform: translateX(3px);
+  }
+
+  .opt.selected {
+    border-color: var(--orange);
+    background: var(--orange-bg);
+    color: var(--dark);
+  }
+
+  .opt-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+  }
+
+  .opt.selected .opt-dot {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+
+  .opt.selected .opt-dot::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  /* ── SCALE (1-5) ── */
+  .scale-wrap { margin-bottom: 32px; }
+
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .scale-btns { display: flex; gap: 8px; }
+
+  .scale-btn {
+    flex: 1;
+    padding: 18px 8px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    color: var(--light-text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .scale-btn:hover { border-color: var(--orange); background: var(--orange-bg); }
+  .scale-btn.selected { border-color: var(--orange); background: var(--orange-bg); color: var(--orange); }
+
+  /* ── PREP BALANCE SCALE ── */
+  .balance-wrap { margin-bottom: 32px; }
+
+  .balance-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .balance-track {
+    position: relative;
+    padding: 0 4px;
+    margin-bottom: 8px;
+  }
+
+  input.balance-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 6px;
+    background: linear-gradient(90deg, #D4E8F0 0%, var(--orange) 100%);
+    border-radius: 3px;
+    outline: none;
+  }
+
+  input.balance-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 26px;
+    height: 26px;
+    background: var(--white);
+    border: 2.5px solid var(--orange);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(232,116,58,0.25);
+  }
+
+  .balance-display {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--orange);
+    min-height: 20px;
+  }
+
+  /* ── SLIDER (weeks) ── */
+  .slider-wrap { margin-bottom: 32px; }
+
+  .slider-display {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .slider-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: var(--orange);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  .slider-unit {
+    font-size: 0.82rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    background: var(--orange);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(232,116,58,0.3);
+  }
+
+  /* ── TEXT INPUT ── */
+  .txt-input {
+    width: 100%;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: var(--dark);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    resize: vertical;
+    min-height: 88px;
+    transition: border-color 0.2s;
+    margin-bottom: 32px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .txt-input:focus { border-color: var(--orange); }
+  .txt-input::placeholder { color: #B0BEC5; }
+
+  /* ── NAV ── */
+  .q-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* ── RESULT SCREEN ── */
+  .result-wrap {
+    width: 100%;
+    max-width: 680px;
+    padding: 52px 24px 80px;
+  }
+
+  /* Top badge */
+  .result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--orange-bg);
+    border: 1px solid rgba(232,116,58,0.25);
+    border-radius: 100px;
+    padding: 6px 16px;
+    margin-bottom: 24px;
+  }
+
+  .result-dot {
+    width: 8px; height: 8px;
+    background: var(--orange);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:0.5; transform:scale(1.4); }
+  }
+
+  .result-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .result-greeting {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--light-text);
+    margin-bottom: 6px;
+  }
+
+  .result-name {
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    line-height: 1.1;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+
+  .result-tagline {
+    font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+    font-weight: 400;
+    color: var(--light-text);
+    font-style: italic;
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+
+  /* Summary card */
+  .result-summary {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+
+  .result-summary p {
+    font-size: 0.97rem;
+    font-weight: 400;
+    color: var(--light-text);
+    line-height: 1.75;
+  }
+
+  .result-summary p em {
+    font-style: normal;
+    color: var(--dark);
+    font-weight: 600;
+  }
+
+  /* Three pillars */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 540px) {
+    .pillars { grid-template-columns: 1fr; }
+  }
+
+  .pillar {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 16px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .pillar-icon {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .pillar-title {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+
+  .pillar-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  /* CTA card */
+  .cta-card {
+    background: var(--dark);
+    border-radius: 16px;
+    padding: 36px 32px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(46,58,63,0.15);
+  }
+
+  .cta-card .cta-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  .cta-card h3 {
+    font-weight: 700;
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    color: var(--white);
+    margin-bottom: 12px;
+    line-height: 1.25;
+  }
+
+  .cta-card p {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 28px;
+    line-height: 1.6;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn-cta {
+    display: inline-block;
+    background: var(--orange);
+    color: var(--white);
+    padding: 15px 44px;
+    border-radius: 100px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 14px;
+    display: block;
+    text-align: center;
+  }
+
+  .btn-cta:hover {
+    background: var(--orange-h);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,116,58,0.4);
+  }
+
+  .cta-note {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: var(--dark);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 0.82rem;
+    transition: transform 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    .site-header { padding: 0 20px; }
+    .modal { padding: 32px 24px; }
+    .cta-card { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- header removed for embedded use -->
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-fill" id="progressBar"></div>
+</div>
+
+<!-- LEAD CAPTURE MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-icon">🎯</div>
+    <div class="modal-form">
+      <div class="modal-field">
+        <label>Full Name *</label>
+        <input class="modal-input" type="text" id="leadName" placeholder="Your name" autocomplete="name" required>
+        <div class="field-error" id="err-name">Please enter your name</div>
+      </div>
+      <div class="modal-field">
+        <label>Email Address *</label>
+        <input class="modal-input" type="email" id="leadEmail" placeholder="your@email.com" autocomplete="email" required>
+        <div class="field-error" id="err-email">Please enter a valid email address</div>
+      </div>
+      <div class="modal-field">
+        <label>Phone Number *</label>
+        <input class="modal-input" type="tel" id="leadPhone" placeholder="+44 7700 000000" autocomplete="tel" required>
+        <div class="field-error" id="err-phone">Please enter your phone number</div>
+      </div>
+      <button class="btn-primary modal-submit" onclick="submitModal()">Start Now →</button>
+    </div>
+    <p class="modal-privacy">Your details are kept private. We will only contact you about your MRCS preparation.</p>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- ── LANDING ── -->
+  <div class="screen active" id="screen-landing">
+    <div class="landing">
+      <div class="pill-tag">Free · Takes 2 Minutes</div>
+      <h1>Failed MRCS?<br><em>Find Out Why.</em></h1>
+      <p class="sub">We'll ask you a few targeted questions to help you pinpoint exactly what went wrong.</p>
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-num">2</div>
+          <div class="stat-lbl">Minutes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">16</div>
+          <div class="stat-lbl">Questions</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">Free</div>
+          <div class="stat-lbl">No Cost</div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="openModal()">Find Out Why →</button>
+    </div>
+  </div>
+
+  <!-- ── QUESTION ── -->
+  <div class="screen" id="screen-question">
+    <div class="question-wrap">
+      <div class="q-meta">
+        <span class="q-label" id="qNumber">Question 1</span>
+        <div class="q-line"></div>
+      </div>
+      <div class="q-text" id="qText"></div>
+      <div id="qInput"></div>
+      <div class="q-nav">
+        <button class="btn-outline" id="backBtn" onclick="goBack()">← Back</button>
+        <button class="btn-primary" id="nextBtn" onclick="goNext()" style="display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div class="screen" id="screen-result">
+    <div class="result-wrap">
+      <div class="result-badge">
+        <div class="result-dot"></div>
+        <span class="result-eyebrow">Your Diagnosis</span>
+      </div>
+      <div class="result-greeting" id="resultGreeting"></div>
+      <div class="result-name" id="resultType"></div>
+      <div class="result-tagline" id="resultTagline"></div>
+
+      <div class="result-summary" id="resultSummary"></div>
+
+      <div class="pillars" id="resultPillars"></div>
+
+      <div class="cta-card">
+        <div class="cta-eyebrow">Next Step</div>
+        <h3>Now you know the problem.<br>How do you fix it?</h3>
+        <p>The next step is a conversation. Join the MRCS Oxford Mentoring Programme — starting with a free 30-minute call where one of our mentors will dive deeper with you on what went wrong, and help you figure out exactly what needs to change.</p>
+        <a class="btn-cta" href="https://mrcsoxford.co.uk/booking" target="_blank">Book My Free Mentoring Session →</a>
+        <div class="cta-note">Online · 30 minutes · Free</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✓ Saved</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+const PART_GATE = {
+  id: 'part',
+  text: 'Which part of the MRCS are you preparing for?',
+  type: 'single',
+  options: ['Part A', 'Part B']
+};
+
+const SHARED_QUESTIONS = [
+  {
+    id: 'attempts',
+    text: 'How many times have you previously attempted this exam?',
+    type: 'single',
+    options: ['Once', 'Twice', 'Three times', 'Four or more times']
+  },
+  {
+    id: 'felt_ready',
+    text: 'Before the exam, did you feel you were ready?',
+    type: 'single',
+    options: ['Yes', 'No']
+  },
+  {
+    id: 'felt_well',
+    text: 'After the exam, did you feel you had done well?',
+    type: 'single',
+    options: ['Yes', 'No']
+  },
+  {
+    id: 'resources',
+    text: 'Which resources have you used to prepare?',
+    type: 'text',
+    placeholder: 'e.g. Pastest, OnExamination, Grey\'s Anatomy...'
+  },
+  {
+    id: 'took_course',
+    text: 'Did you take any courses to prepare?',
+    type: 'single',
+    options: ['Yes', 'No']
+  },
+  {
+    id: 'courses_taken',
+    text: 'Which courses have you taken?',
+    type: 'text',
+    placeholder: 'List the courses you attended...',
+    showIf: (a) => a.took_course === 'Yes'
+  },
+  {
+    id: 'based',
+    text: 'Where are you currently based?',
+    type: 'single',
+    options: ['UK', 'Ireland', 'Elsewhere']
+  },
+  {
+    id: 'training_post',
+    text: 'Are you currently in a surgical training post?',
+    type: 'single',
+    options: ['Yes', 'No']
+  },
+  {
+    id: 'study_group',
+    text: 'Were you part of a study group during your preparation?',
+    type: 'single',
+    options: ['Yes', 'No']
+  },
+  {
+    id: 'start_weeks',
+    text: 'How many weeks before the exam did you start preparing?',
+    type: 'slider',
+    min: 1, max: 30
+  },
+  {
+    id: 'mentor',
+    text: 'Do you have an accessible and trusted mentor to guide your preparation?',
+    type: 'single',
+    options: ['Yes', 'No']
+  },
+  {
+    id: 'confidence',
+    text: 'How confident do you feel about your next attempt right now?',
+    type: 'scale',
+    min: 1, max: 5,
+    labels: ['Not at all confident', 'Very confident']
+  },
+  {
+    id: 'mindset',
+    text: 'What best describes your mindset going into your next attempt?',
+    type: 'single',
+    options: [
+      'I know exactly what went wrong and have a plan',
+      'I have some idea but feel lost',
+      'I\'m not sure where to start',
+      'I\'m considering whether to continue'
+    ]
+  },
+  {
+    id: 'why_pass',
+    text: 'Why is it important for you to pass the MRCS?',
+    type: 'single',
+    options: [
+      'Apply for ST3',
+      'Apply for Registrar Jobs',
+      'Apply for GMC Registration',
+      'Additional qualification on my CV',
+      'Increase my surgical knowledge',
+      'Other'
+    ]
+  }
+];
+
+const PART_A_SPECIFIC = [
+  {
+    id: 'a_struggle',
+    text: 'Which section did you struggle with most?',
+    type: 'single',
+    options: [
+      'Anatomy',
+      'Physiology & Pharmacology',
+      'Pathology & Microbiology',
+      'Common surgical conditions',
+      'Perioperative management',
+      'Trauma'
+    ]
+  },
+  {
+    id: 'a_balance',
+    text: 'How would you describe your preparation balance?',
+    type: 'balance',
+    leftLabel: 'Theory & Studying',
+    rightLabel: 'Practising Questions with Colleagues'
+  }
+];
+
+const PART_B_SPECIFIC = [
+  {
+    id: 'b_fail_area',
+    text: 'Which part did you fail?',
+    type: 'single',
+    options: ['Knowledge', 'Skills', 'Both']
+  },
+  {
+    id: 'b_balance',
+    text: 'How would you describe your preparation balance?',
+    type: 'balance',
+    leftLabel: 'Theory & Studying',
+    rightLabel: 'Practising Stations with Colleagues'
+  }
+];
+
+// ─── ARCHETYPES ───────────────────────────────────────────────────────────────
+
+const ARCHETYPES = {
+  U: {
+    label: 'The Underpreparer',
+    tagline: 'You didn\'t fail the MRCS. You failed the preparation.',
+    summary: (name) => `<p>${name}, you have the ability to pass this exam. But the evidence from your answers is clear: you went in without enough time and structure to prepare properly. The good news? This is the <em>most fixable</em> failure pattern of all. You don't have a knowledge problem — you have a planning problem.</p>`,
+    pillars: [
+      { icon: '📅', title: 'Start Earlier', desc: 'Candidates who start 12+ weeks out pass at significantly higher rates' },
+      { icon: '🗺️', title: 'Build a Plan', desc: 'A structured week-by-week timeline around your clinical rota' },
+      { icon: '👤', title: 'Add Accountability', desc: 'Someone to keep you on track when clinical life gets in the way' }
+    ]
+  },
+  P: {
+    label: 'The Passive Studier',
+    tagline: 'You studied hard. You just studied wrong.',
+    summary: (name) => `<p>${name}, you put the hours in. You read the books. You felt ready. But passive learning doesn't build the kind of recall the MRCS demands under real exam pressure. The conventional advice is to study more — we disagree. Studying more of the <em>wrong thing</em> produces the same result.</p>`,
+    pillars: [
+      { icon: '⚡', title: 'Active Recall', desc: 'Flashcards, question banks, and teaching — not reading and highlighting' },
+      { icon: '⏱️', title: 'Timed Practice', desc: 'Every question done under real exam conditions from week one' },
+      { icon: '🔁', title: 'Different Method', desc: 'The resit winners don\'t work harder — they work completely differently' }
+    ]
+  },
+  K: {
+    label: 'The Knowledge Gap',
+    tagline: 'You know you have a hole. You just haven\'t fixed it yet.',
+    summary: (name) => `<p>${name}, you know exactly where your weak spots are — and that self-awareness puts you ahead of most candidates. The problem is knowing you have a gap and actually closing it are two different things. Going back to the same chapter is not a strategy. It's procrastination with the <em>appearance</em> of productivity.</p>`,
+    pillars: [
+      { icon: '🎯', title: 'Targeted Revision', desc: 'Spend 80% of your time on your weakest areas, not your strongest' },
+      { icon: '🧠', title: 'Active Retrieval', desc: 'Spaced repetition and active recall — not passive re-reading' },
+      { icon: '🔍', title: 'Examiner Lens', desc: 'Understand why each topic is tested and what the examiner wants to see' }
+    ]
+  },
+  E: {
+    label: 'The Exam Performer',
+    tagline: 'You\'re not bad at the MRCS. You\'re bad at performing under pressure.',
+    summary: (name) => `<p>${name}, this is the most frustrating pattern — and the rarest. You prepared well. You knew the material. You walked out thinking it was fine. Then the result came back and it made no sense. You don't have a knowledge problem. You have a <em>performance problem</em>.</p>`,
+    pillars: [
+      { icon: '🧪', title: 'Exam Simulation', desc: 'High-fidelity mock conditions — not comfortable practice at your desk' },
+      { icon: '🧘', title: 'Pressure Inoculation', desc: 'Training your brain to retrieve information under genuine time pressure' },
+      { icon: '📋', title: 'Day Strategy', desc: 'A specific performance plan for how you approach the exam itself' }
+    ]
+  },
+  I: {
+    label: 'The Isolated Studier',
+    tagline: 'The MRCS was not designed to be passed alone.',
+    summary: (name) => `<p>${name}, you've been trying to figure this out by yourself — no mentor, no study group, possibly outside the structured environment of a UK training programme. That's not a reflection of your ability. It's a reflection of how this exam is built. The MRCS rewards exposure to how <em>experienced surgeons think</em> — and that doesn't come from textbooks.</p>`,
+    pillars: [
+      { icon: '🤝', title: 'Find a Mentor', desc: 'Someone who can show you the difference between a correct and an examiner\'s answer' },
+      { icon: '👥', title: 'Join a Group', desc: 'Peers who challenge your thinking and simulate real exam dynamics' },
+      { icon: '🌐', title: 'Get Access', desc: 'The structured exposure you\'ve been missing — regardless of where you are' }
+    ]
+  }
+};
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+
+let answers = {};
+let questionFlow = [];
+let currentIndex = 0;
+let currentAnswer = null;
+let leadData = {};
+
+function buildFlow() {
+  const partSpecific = answers.part === 'Part A' ? PART_A_SPECIFIC : PART_B_SPECIFIC;
+  questionFlow = [
+    SHARED_QUESTIONS[0],
+    ...partSpecific,
+    ...SHARED_QUESTIONS.slice(1)
+  ];
+}
+
+// ─── SCORING ─────────────────────────────────────────────────────────────────
+
+function calculateArchetype() {
+  const s = { U: 0, P: 0, K: 0, E: 0, I: 0 };
+  const a = answers;
+
+  const weeks = parseInt(a.start_weeks) || 8;
+  if (weeks <= 4) s.U += 3;
+  else if (weeks <= 8) s.U += 2;
+  else if (weeks <= 16) s.U += 1;
+  else { s.E += 1; s.P += 1; }
+
+  if (a.felt_ready === 'Yes') { s.E += 2; s.P += 2; }
+  else { s.U += 2; s.K += 1; }
+
+  if (a.felt_well === 'Yes') s.E += 3;
+  else { s.K += 2; s.U += 1; }
+
+  if (a.study_group === 'No') { s.I += 2; s.U += 1; }
+  else s.E += 1;
+
+  if (a.mentor === 'No') s.I += 3;
+  else s.E += 1;
+
+  if (a.training_post === 'No') s.I += 2;
+  if (a.based === 'Elsewhere') s.I += 2;
+  if (a.took_course === 'No') { s.I += 1; s.K += 1; }
+
+  const conf = parseInt(a.confidence) || 3;
+  if (conf <= 2) { s.U += 1; s.K += 1; }
+  else if (conf >= 4) { s.E += 1; s.P += 1; }
+
+  // Balance sliders (0=all theory, 100=all practice)
+  const abal = parseInt(a.a_balance) || 50;
+  if (abal < 30) s.P += 3;          // mostly theory → passive studier
+  else if (abal < 45) s.P += 2;
+  else if (abal > 70) s.K += 1;     // mostly practice
+  else s.E += 2;                     // balanced → exam performer
+
+  const bbal = parseInt(a.b_balance) || 50;
+  if (bbal < 30) { s.P += 3; s.U += 2; }
+  else if (bbal < 45) s.P += 2;
+  else if (bbal > 70) s.K += 1;
+  else s.E += 2;
+
+  // Part A
+  if (a.a_struggle) s.K += 3;
+
+  // Part B
+  if (a.b_fail_area === 'Knowledge') s.K += 3;
+  else if (a.b_fail_area === 'Skills') { s.P += 3; s.E += 1; }
+  else if (a.b_fail_area === 'Both') { s.K += 2; s.P += 2; }
+
+  if (s.I >= 7) return 'I';
+
+  const sorted = Object.entries(s).sort((a, b) => b[1] - a[1]);
+  const top = sorted[0], second = sorted[1];
+
+  if (top[1] - second[1] <= 2) {
+    const tied = [top[0], second[0]];
+    if (tied.includes('E') && tied.includes('P')) return 'E';
+    if (tied.includes('K') && tied.includes('U')) return 'K';
+  }
+
+  return top[0];
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('active');
+  setTimeout(() => document.getElementById('leadName').focus(), 100);
+}
+
+function submitModal() {
+  const nameEl = document.getElementById('leadName');
+  const emailEl = document.getElementById('leadEmail');
+  const phoneEl = document.getElementById('leadPhone');
+
+  const name = nameEl.value.trim();
+  const email = emailEl.value.trim();
+  const phone = phoneEl.value.trim();
+
+  let valid = true;
+
+  // Reset
+  [nameEl, emailEl, phoneEl].forEach(el => el.classList.remove('error'));
+  ['err-name','err-email','err-phone'].forEach(id => document.getElementById(id).classList.remove('show'));
+
+  if (!name) {
+    nameEl.classList.add('error');
+    document.getElementById('err-name').classList.add('show');
+    valid = false;
+  }
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!email || !emailOk) {
+    emailEl.classList.add('error');
+    document.getElementById('err-email').classList.add('show');
+    valid = false;
+  }
+
+  if (!phone) {
+    phoneEl.classList.add('error');
+    document.getElementById('err-phone').classList.add('show');
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  // Clear error state on input
+  leadData = { name, email, phone };
+  document.getElementById('modalOverlay').classList.remove('active');
+  startQuiz();
+}
+
+// Clear error on input
+['leadName','leadEmail','leadPhone'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function() {
+    this.classList.remove('error');
+    const errId = { leadName: 'err-name', leadEmail: 'err-email', leadPhone: 'err-phone' }[id];
+    document.getElementById(errId).classList.remove('show');
+  });
+});
+
+// ─── QUIZ ────────────────────────────────────────────────────────────────────
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + id);
+  el.classList.add('active');
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const total = questionFlow.length + 1;
+  const pct = Math.min(((currentIndex + 2) / total) * 100, 95);
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function startQuiz() {
+  showScreen('question');
+  currentIndex = -1;
+  currentAnswer = null;
+  renderQuestion(PART_GATE);
+  document.getElementById('progressBar').style.width = '5%';
+}
+
+const BALANCE_LABELS = [
+  'Entirely theory',
+  'Mostly theory',
+  'Leaning theory',
+  'Balanced',
+  'Leaning practice',
+  'Mostly practice',
+  'Entirely practice'
+];
+
+function getBalanceLabel(val) {
+  const idx = Math.round((val / 100) * (BALANCE_LABELS.length - 1));
+  return BALANCE_LABELS[idx];
+}
+
+function renderQuestion(q) {
+  document.getElementById('qNumber').textContent =
+    currentIndex === -1 ? 'Question 1' : `Question ${currentIndex + 2}`;
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('backBtn').style.display = currentIndex <= -1 ? 'none' : 'inline-block';
+
+  const container = document.getElementById('qInput');
+  container.innerHTML = '';
+
+  if (q.type === 'single') {
+    const opts = document.createElement('div');
+    opts.className = 'options';
+    const savedVal = currentIndex === -1 ? answers.part : answers[q.id];
+
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'opt' + (savedVal === opt ? ' selected' : '');
+      btn.innerHTML = `<div class="opt-dot"></div><span>${opt}</span>`;
+      if (savedVal === opt) {
+        currentAnswer = opt;
+        document.getElementById('nextBtn').style.display = 'inline-block';
+      }
+      btn.addEventListener('click', () => {
+        opts.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+        btn.classList.add('selected');
+        currentAnswer = opt;
+        document.getElementById('nextBtn').style.display = 'inline-block';
+      });
+      opts.appendChild(btn);
+    });
+    container.appendChild(opts);
+  }
+
+  else if (q.type === 'scale') {
+    const wrap = document.createElement('div');
+    wrap.className = 'scale-wrap';
+    const labels = document.createElement('div');
+    labels.className = 'scale-labels';
+    labels.innerHTML = `<span>${q.labels[0]}</span><span>${q.labels[1]}</span>`;
+    const btns = document.createElement('div');
+    btns.className = 'scale-btns';
+    const saved = answers[q.id];
+
+    for (let i = q.min; i <= q.max; i++) {
+      const b = document.createElement('button');
+      b.className = 'scale-btn' + (saved == i ? ' selected' : '');
+      b.textContent = i;
+      if (saved == i) { currentAnswer = String(i); document.getElementById('nextBtn').style.display = 'inline-block'; }
+      b.addEventListener('click', () => {
+        btns.querySelectorAll('.scale-btn').forEach(x => x.classList.remove('selected'));
+        b.classList.add('selected');
+        currentAnswer = String(i);
+        document.getElementById('nextBtn').style.display = 'inline-block';
+      });
+      btns.appendChild(b);
+    }
+    wrap.appendChild(labels);
+    wrap.appendChild(btns);
+    container.appendChild(wrap);
+  }
+
+  else if (q.type === 'balance') {
+    const saved = answers[q.id] || '50';
+    const wrap = document.createElement('div');
+    wrap.className = 'balance-wrap';
+
+    const lbls = document.createElement('div');
+    lbls.className = 'balance-labels';
+    lbls.innerHTML = `<span>← ${q.leftLabel}</span><span>${q.rightLabel} →</span>`;
+
+    const track = document.createElement('div');
+    track.className = 'balance-track';
+
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.className = 'balance-slider';
+    slider.min = 0; slider.max = 100; slider.value = saved;
+
+    const display = document.createElement('div');
+    display.className = 'balance-display';
+    display.textContent = getBalanceLabel(parseInt(saved));
+
+    currentAnswer = saved;
+    document.getElementById('nextBtn').style.display = 'inline-block';
+
+    slider.addEventListener('input', () => {
+      currentAnswer = slider.value;
+      display.textContent = getBalanceLabel(parseInt(slider.value));
+    });
+
+    track.appendChild(slider);
+    wrap.appendChild(lbls);
+    wrap.appendChild(track);
+    wrap.appendChild(display);
+    container.appendChild(wrap);
+  }
+
+  else if (q.type === 'slider') {
+    const saved = answers[q.id] || 8;
+    const wrap = document.createElement('div');
+    wrap.className = 'slider-wrap';
+    wrap.innerHTML = `
+      <div class="slider-display">
+        <div class="slider-num" id="sliderNum">${saved}</div>
+        <div class="slider-unit">weeks out</div>
+      </div>
+    `;
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.min = q.min; input.max = q.max; input.value = saved;
+    currentAnswer = String(saved);
+    document.getElementById('nextBtn').style.display = 'inline-block';
+    input.addEventListener('input', () => {
+      document.getElementById('sliderNum').textContent = input.value;
+      currentAnswer = input.value;
+    });
+    wrap.appendChild(input);
+    container.appendChild(wrap);
+  }
+
+  else if (q.type === 'text') {
+    const ta = document.createElement('textarea');
+    ta.className = 'txt-input';
+    ta.placeholder = q.placeholder || '';
+    ta.value = answers[q.id] || '';
+    currentAnswer = answers[q.id] || null;
+    // Only show Next if there's already a saved answer
+    if (answers[q.id] && answers[q.id].trim()) {
+      document.getElementById('nextBtn').style.display = 'inline-block';
+    }
+    ta.addEventListener('input', () => {
+      currentAnswer = ta.value;
+      document.getElementById('nextBtn').style.display = ta.value.trim() ? 'inline-block' : 'none';
+    });
+    container.appendChild(ta);
+  }
+}
+
+function goNext() {
+  if (currentIndex === -1) {
+    answers.part = currentAnswer;
+    buildFlow();
+    currentIndex = 0;
+  } else {
+    answers[questionFlow[currentIndex].id] = currentAnswer;
+    currentIndex++;
+  }
+
+  while (currentIndex < questionFlow.length) {
+    const q = questionFlow[currentIndex];
+    if (!q.showIf || q.showIf(answers)) break;
+    currentIndex++;
+  }
+
+  if (currentIndex >= questionFlow.length) {
+    finishQuiz();
+    return;
+  }
+
+  currentAnswer = answers[questionFlow[currentIndex]?.id] || null;
+  updateProgress();
+  renderQuestion(questionFlow[currentIndex]);
+}
+
+function goBack() {
+  if (currentIndex <= 0) {
+    currentIndex = -1;
+    currentAnswer = answers.part || null;
+    renderQuestion(PART_GATE);
+    document.getElementById('progressBar').style.width = '5%';
+    document.getElementById('backBtn').style.display = 'none';
+    return;
+  }
+  currentIndex--;
+  while (currentIndex > 0) {
+    const q = questionFlow[currentIndex];
+    if (!q.showIf || q.showIf(answers)) break;
+    currentIndex--;
+  }
+  currentAnswer = answers[questionFlow[currentIndex]?.id] || null;
+  updateProgress();
+  renderQuestion(questionFlow[currentIndex]);
+}
+
+// ─── FINISH ───────────────────────────────────────────────────────────────────
+
+function finishQuiz() {
+  const archetypeId = calculateArchetype();
+  answers._archetype = archetypeId;
+  answers._timestamp = new Date().toISOString();
+
+  saveToSheets({
+    ...leadData,
+    archetype: archetypeId,
+    part: answers.part,
+    timestamp: answers._timestamp,
+    attempts: answers.attempts,
+    felt_ready: answers.felt_ready,
+    felt_well: answers.felt_well,
+    resources: answers.resources,
+    took_course: answers.took_course,
+    courses_taken: answers.courses_taken || '',
+    based: answers.based,
+    training_post: answers.training_post,
+    study_group: answers.study_group,
+    start_weeks: answers.start_weeks,
+    mentor: answers.mentor,
+    confidence: answers.confidence,
+    mindset: answers.mindset,
+    why_pass: answers.why_pass,
+    a_struggle: answers.a_struggle || '',
+    a_balance: answers.a_balance || '',
+    b_fail_area: answers.b_fail_area || '',
+    b_balance: answers.b_balance || ''
+  });
+
+  showResult(archetypeId);
+}
+
+async function saveToSheets(data) {
+  try {
+    await fetch('https://formspree.io/f/mwvnagrw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    showToast('✓ Details saved');
+  } catch (e) {
+    console.log('Formspree error:', e);
+  }
+}
+
+function showResult(id) {
+  const a = ARCHETYPES[id];
+  const firstName = leadData.name ? leadData.name.split(' ')[0] : 'There';
+
+  document.getElementById('resultGreeting').textContent = `Here's your diagnosis, ${firstName}.`;
+  document.getElementById('resultType').textContent = a.label;
+  document.getElementById('resultTagline').textContent = a.tagline;
+  document.getElementById('resultSummary').innerHTML = a.summary(firstName);
+
+  const pillarsEl = document.getElementById('resultPillars');
+  pillarsEl.innerHTML = a.pillars.map(p => `
+    <div class="pillar">
+      <span class="pillar-icon">${p.icon}</span>
+      <div class="pillar-title">${p.title}</div>
+      <div class="pillar-desc">${p.desc}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('progressBar').style.width = '100%';
+  showScreen('result');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
