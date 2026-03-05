@@ -1464,6 +1464,7 @@ function finishQuiz() {
 }
 
 async function saveToSheets(data) {
+  console.log('saveToSheets called with:', data);
   try {
     const res = await fetch('https://formspree.io/f/mwvnagrw', {
       method: 'POST',
@@ -1471,6 +1472,7 @@ async function saveToSheets(data) {
       body: JSON.stringify(data)
     });
     const json = await res.json().catch(() => ({}));
+    console.log('Formspree response:', res.status, json);
     if (res.ok) {
       showToast('✓ Details saved');
     } else {
