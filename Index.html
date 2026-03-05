@@ -1188,6 +1188,7 @@ function submitModal() {
 
   // Clear error state on input
   leadData = { name, email, phone };
+  saveToSheets({ name, email, phone, timestamp: new Date().toISOString() });
   document.getElementById('modalOverlay').classList.remove('active');
   startQuiz();
 }
