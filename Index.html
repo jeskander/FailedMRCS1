@@ -1465,14 +1465,19 @@ function finishQuiz() {
 
 async function saveToSheets(data) {
   try {
-    await fetch('https://formspree.io/f/mwvnagrw', {
+    const res = await fetch('https://formspree.io/f/mwvnagrw', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(data)
     });
-    showToast('✓ Details saved');
+    const json = await res.json().catch(() => ({}));
+    if (res.ok) {
+      showToast('✓ Details saved');
+    } else {
+      console.error('Formspree rejected submission:', res.status, json);
+    }
   } catch (e) {
-    console.log('Formspree error:', e);
+    console.error('Formspree network error:', e);
   }
 }
 
